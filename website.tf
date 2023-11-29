@@ -283,7 +283,8 @@ resource "aws_cloudfront_distribution" "website" {
 
   viewer_certificate {
     #acm_certificate_arn            = var.acm_certificate_arn_to_use
-    acm_certificate_arn            = var.create_acm_certificate ? aws_acm_certificate_validation.cert_validation[0].certificate_arn : var.acm_certificate_arn_to_use
+    acm_certificate_arn            = var.create_acm_certificate 
+    # ? aws_acm_certificate_validation.cert_validation[0].certificate_arn : var.acm_certificate_arn_to_use
     cloudfront_default_certificate = false
     minimum_protocol_version       = "TLSv1.2_2021"
     ssl_support_method             = "sni-only"
