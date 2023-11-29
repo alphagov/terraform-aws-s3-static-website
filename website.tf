@@ -283,8 +283,7 @@ resource "aws_cloudfront_distribution" "website" {
 
   viewer_certificate {
     #acm_certificate_arn            = var.acm_certificate_arn_to_use
-    acm_certificate_arn            = var.create_acm_certificate 
-    # ? aws_acm_certificate_validation.cert_validation[0].certificate_arn : var.acm_certificate_arn_to_use
+    acm_certificate_arn            = var.create_acm_certificate ? aws_acm_certificate_validation.cert_validation[0].certificate_arn : var.acm_certificate_arn_to_use
     cloudfront_default_certificate = false
     minimum_protocol_version       = "TLSv1.2_2021"
     ssl_support_method             = "sni-only"
@@ -301,37 +300,37 @@ resource "aws_cloudfront_distribution" "website" {
 #------------------------------------------------------------------------------
 # Cloudfront DNS Record (if CloudFront is enabled)
 #------------------------------------------------------------------------------
-# resource "aws_route53_record" "website_cloudfront_record" {
-#   provider = aws.main
+resource "aws_route53_record" "website_cloudfront_record" {
+  provider = aws.main
 
-#   count = var.create_route53_website_records ? 1 : 0
+  count = var.create_route53_website_records ? 1 : 0
 
-#   zone_id = var.create_route53_hosted_zone ? aws_route53_zone.hosted_zone[0].zone_id : var.route53_hosted_zone_id
-#   name    = local.website_bucket_name
-#   type    = "A"
+  zone_id = var.create_route53_hosted_zone ? aws_route53_zone.hosted_zone[0].zone_id : var.route53_hosted_zone_id
+  name    = local.website_bucket_name
+  type    = "A"
 
-#   alias {
-#     name                   = aws_cloudfront_distribution.website.domain_name
-#     zone_id                = aws_cloudfront_distribution.website.hosted_zone_id
-#     evaluate_target_health = false
-#   }
-# }
+  alias {
+    name                   = aws_cloudfront_distribution.website.domain_name
+    zone_id                = aws_cloudfront_distribution.website.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
 
-# resource "aws_route53_record" "website_cloudfront_record_ipv6" {
-#   provider = aws.main
+resource "aws_route53_record" "website_cloudfront_record_ipv6" {
+  provider = aws.main
 
-#   count = (var.is_ipv6_enabled && var.create_route53_website_records) ? 1 : 0
+  count = (var.is_ipv6_enabled && var.create_route53_website_records) ? 1 : 0
 
-#   zone_id = var.create_route53_hosted_zone ? aws_route53_zone.hosted_zone[0].zone_id : var.route53_hosted_zone_id
-#   name    = local.website_bucket_name
-#   type    = "AAAA"
+  zone_id = var.create_route53_hosted_zone ? aws_route53_zone.hosted_zone[0].zone_id : var.route53_hosted_zone_id
+  name    = local.website_bucket_name
+  type    = "AAAA"
 
-#   alias {
-#     name                   = aws_cloudfront_distribution.website.domain_name
-#     zone_id                = aws_cloudfront_distribution.website.hosted_zone_id
-#     evaluate_target_health = false
-#   }
-# }
+  alias {
+    name                   = aws_cloudfront_distribution.website.domain_name
+    zone_id                = aws_cloudfront_distribution.website.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
 
 #resource "aws_route53_record" "www_website_record" {
 #  provider = aws.main
